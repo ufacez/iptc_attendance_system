@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Monitoring System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Attendance Monitoring System</h1>
+            <p class="subtitle">Manage students and track attendance efficiently</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('students')">Students</button>
+            <button class="tab-btn" onclick="showTab('attendance')">Attendance</button>
+            <button class="tab-btn" onclick="showTab('reports')">Reports</button>
+        </div>
+
+        <!-- Students Tab -->
+        <div id="students-tab" class="tab-content active">
+            <div class="section-header">
+                <h2>Student Management</h2>
+                <button class="btn btn-primary" onclick="showAddStudentModal()">+ Add Student</button>
+            </div>
+
+            <div class="table-container">
+                <table id="students-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-tbody">
+                        <tr>
+                            <td colspan="5" class="text-center">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Attendance Tab -->
+        <div id="attendance-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Mark Attendance</h2>
+                <div class="date-filter">
+                    <input type="date" id="attendance-date" class="date-input">
+                    <button class="btn btn-secondary" onclick="filterAttendance()">Filter</button>
+                    <button class="btn btn-secondary" onclick="loadAttendance()">Show All</button>
+                </div>
+            </div>
+
+            <div class="quick-attendance">
+                <h3>Quick Mark Attendance</h3>
+                <div class="form-group">
+                    <label>Select Student:</label>
+                    <select id="quick-student" class="form-control">
+                        <option value="">-- Select Student --</option>
+                    </select>
+                </div>
+                <div class="status-buttons">
+                    <button class="btn btn-present" onclick="quickMarkAttendance('Present')">✓ Present</button>
+                    <button class="btn btn-absent" onclick="quickMarkAttendance('Absent')">✗ Absent</button>
+                    <button class="btn btn-late" onclick="quickMarkAttendance('Late')">⏰ Late</button>
+                    <button class="btn btn-excused" onclick="quickMarkAttendance('Excused')">📝 Excused</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-tbody">
+                        <tr>
+                            <td colspan="6" class="text-center">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Reports & Export</h2>
+            </div>
+
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h3>Student Statistics</h3>
+                    <div class="stat-value" id="total-students">0</div>
+                    <p>Total Students</p>
+                    <button class="btn btn-secondary" onclick="exportStudents()">Export Students CSV</button>
+                </div>
+
+                <div class="report-card">
+                    <h3>Attendance Statistics</h3>
+                    <div class="stat-value" id="total-records">0</div>
+                    <p>Total Attendance Records</p>
+                    <button class="btn btn-secondary" onclick="exportAttendance()">Export Attendance CSV</button>
+                </div>
+
+                <div class="report-card">
+                    <h3>Today's Summary</h3>
+                    <div id="today-summary">
+                        <div class="summary-item">Present: <span id="today-present">0</span></div>
+                        <div class="summary-item">Absent: <span id="today-absent">0</span></div>
+                        <div class="summary-item">Late: <span id="today-late">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="student-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Student</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="student-form" onsubmit="saveStudent(event)">
+                <input type="hidden" id="student-id">
+                <div class="form-group">
+                    <label for="student-name">Name *</label>
+                    <input type="text" id="student-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="student-email">Email *</label>
+                    <input type="email" id="student-email" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
