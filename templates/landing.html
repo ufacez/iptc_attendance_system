@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSIT Department - Our Lady of Fatima University</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-top {
+            background: #1b5e20;
+            padding: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .nav-top-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2e7d32;
+            font-size: 24px;
+        }
+
+        .logo-text h1 {
+            font-size: 1.4em;
+            margin-bottom: 2px;
+        }
+
+        .logo-text p {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-links .btn-attendance {
+            background: #43a047;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .nav-links .btn-attendance:hover {
+            background: #388e3c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(27, 94, 32, 0.8), rgba(46, 125, 50, 0.8)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%232e7d32" width="1200" height="600"/><path fill="%231b5e20" opacity="0.3" d="M0,300 Q300,100 600,300 T1200,300 L1200,600 L0,600 Z"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 20px;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero h2 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.4em;
+            margin-bottom: 30px;
+            opacity: 0.95;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1.4s ease;
+        }
+
+        .btn-hero {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #2e7d32;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #2e7d32;
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 20px;
+            background: #f5f5f5;
+        }
+
+        .features-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            color: #1b5e20;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.5em;
+            color: white;
+        }
+
+        .feature-card h3 {
+            color: #2e7d32;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* About Section */
+        .about {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5em;
+            color: #1b5e20;
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .about-image {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 15px;
+            padding: 60px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .about-image-placeholder {
+            font-size: 8em;
+            color: #2e7d32;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 1.3em;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1b5e20;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8em;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: #2e7d32;
+                flex-direction: column;
+                padding: 20px;
+                gap: 10px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h2 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-hero {
+                width: 100%;
+            }
+        }
+
+        /* Attendance System Page */
+        .attendance-system {
+            display: none;
+            min-height: 100vh;
+            background: linear-gradient(rgba(27, 94, 32, 0.7), rgba(46, 125, 50, 0.7));
+        }
+
+        .attendance-system.active {
+            display: block;
+        }
+
+        .system-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .system-header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .system-header h1 {
+            color: #1b5e20;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: white;
+            color: #2e7d32;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #f1f8e9;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-top">
+                <div class="nav-top-content">
+                    <div>📞 Contact: (02) 8123-4567 | ✉️ info@fatima.edu.ph</div>
+                    <div>📍 Angeles City, Pampanga</div>
+                </div>
+            </div>
+            <div class="nav-main">
+                <div class="logo-section">
+                    <div class="logo-img">OF</div>
+                    <div class="logo-text">
+                        <h1>OLFU</h1>
+                        <p>Department of Information Technology</p>
+                    </div>
+                </div>
+                <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="/index" class="btn-attendance">Access Attendance System</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h2>BSIT Attendance Monitoring System</h2>
+                <p>Modernizing student attendance tracking for the Bachelor of Science in Information Technology program</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-hero btn-primary" onclick="showAttendanceSystem()">Get Started</a>
+                    <a href="#features" class="btn-hero btn-secondary">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="features-content">
+                <h2 class="section-title">System Features</h2>
+                <p class="section-subtitle">Comprehensive tools for efficient attendance management</p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">👥</div>
+                        <h3>Student Management</h3>
+                        <p>Easily add, edit, and manage BSIT student records with comprehensive information including year level and section.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📋</div>
+                        <h3>Quick Attendance</h3>
+                        <p>Mark attendance with a single click. Support for Present, Absent, Late, and Excused statuses with date tracking.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Reports & Analytics</h3>
+                        <p>Generate detailed reports and statistics. View attendance patterns and export data in CSV format.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Advanced Filtering</h3>
+                        <p>Filter attendance records by date, year level, and section for precise data analysis.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💾</div>
+                        <h3>Data Export</h3>
+                        <p>Export student lists and attendance records to CSV files for external analysis and backup.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Real-time Updates</h3>
+                        <p>All changes are reflected immediately with automatic data synchronization across the system.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about" id="about">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About the System</h2>
+                    <p>The BSIT Attendance Monitoring System is designed specifically for Our Lady of Fatima University's Bachelor of Science in Information Technology program. This web-based application streamlines the process of tracking student attendance, making it easier for faculty and administrators to maintain accurate records.</p>
+                    <p>Built with modern web technologies, the system offers a user-friendly interface that requires minimal training. Whether you're marking daily attendance or generating semester reports, our system provides the tools you need.</p>
+                    <p><strong>Key Benefits:</strong></p>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>✓ Paperless attendance tracking</li>
+                        <li>✓ Instant access to attendance history</li>
+                        <li>✓ Reduced administrative workload</li>
+                        <li>✓ Improved data accuracy</li>
+                    </ul>
+                </div>
+                <div class="about-image">
+                    <div class="about-image-placeholder">🎓</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta" id="contact">
+            <div class="cta-content">
+                <h2>Ready to Get Started?</h2>
+                <p>Access the attendance system now and streamline your student tracking process</p>
+                <a href="#" class="btn-hero btn-primary" onclick="showAttendanceSystem()">Access System Now</a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#home">Home</a>
+                    <a href="#features">Features</a>
+                    <a href="#about">About</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+                <p>&copy; 2025 Our Lady of Fatima University - BSIT Department. All rights reserved.</p>
+                <p style="margin-top: 10px; opacity: 0.8;">Bachelor of Science in Information Technology</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Attendance System Page (Hidden by default) -->
+    <div id="attendance-page" class="attendance-system">
+        <div class="system-container">
+            <a href="#" class="back-btn" onclick="showLandingPage()">← Back to Home</a>
+            <div class="system-header">
+                <h1>🎓 BSIT Attendance System</h1>
+                <p>Our Lady of Fatima University</p>
+            </div>
+            <div style="background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                <h2 style="color: #2e7d32; margin-bottom: 20px;">System Integration Required</h2>
+                <p style="color: #666; margin-bottom: 30px; font-size: 1.1em;">
+                    The attendance monitoring system needs to be integrated with your Flask backend.
+                    Please copy the templates/index.html content here to enable full functionality.
+                </p>
+                <div style="background: #f1f8e9; padding: 30px; border-radius: 10px; border: 2px solid #66bb6a;">
+                    <h3 style="color: #1b5e20; margin-bottom: 15px;">Integration Steps:</h3>
+                    <ol style="text-align: left; margin: 0 auto; max-width: 600px; line-height: 2; color: #333;">
+                        <li>Copy this HTML to replace templates/index.html</li>
+                        <li>Ensure Flask app.py is running</li>
+                        <li>The full attendance system will be available</li>
+                        <li>All student and attendance features will be functional</li>
+                    </ol>
+                </div>
+                <p style="margin-top: 30px; color: #666;">
+                    For now, you can explore the landing page features and design.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showAttendanceSystem() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('attendance-page').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showLandingPage() {
+            document.getElementById('landing-page').style.display = 'block';
+            document.getElementById('attendance-page').classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

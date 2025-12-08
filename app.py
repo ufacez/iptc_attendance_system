@@ -54,6 +54,10 @@ def read_attendance():
 
 # Routes
 @app.route('/')
+def landing():
+    return render_template('landing.html')
+
+@app.route('/index')
 def index():
     return render_template('index.html')
 
@@ -152,6 +156,7 @@ def mark_attendance():
     
     return jsonify({'message': 'Attendance marked successfully', 'id': attendance_id}), 201
 
+
 @app.route('/api/attendance/<int:attendance_id>', methods=['DELETE'])
 def delete_attendance(attendance_id):
     attendance = read_attendance()
@@ -171,6 +176,7 @@ def export_students():
 @app.route('/api/export/attendance')
 def export_attendance():
     return send_file(ATTENDANCE_FILE, as_attachment=True, download_name='bsit_attendance_export.csv')
+    
 
 if __name__ == '__main__':
     # Enable livereload for development
