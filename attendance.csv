@@ -1,3 +1,6 @@
 id,student_id,student_name,year,section,date,status,notes
 1,1,Ean Paolo Espiritu,1st Year,Dash 1,2025-12-08,Present,
 2,1,Ean Paolo Espiritu,1st Year,Dash 1,2025-12-09,Present,
+3,1,Ean Paolo Espiritu,1st Year,Dash 2,2025-12-09,Absent,
+4,1,Ean Paolo Espiritu,2nd Year,Dash 2,2025-12-09,Present,
+5,1,Ean Paolo Espiritu,2nd Year,Dash 2,2025-12-10,Late,Was stuck in traffic
