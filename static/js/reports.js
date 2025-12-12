@@ -17,6 +17,18 @@ function setCurrentDate() {
     });
 }
 
+// Cross-tab sync: Listen for updates from other tabs
+window.addEventListener('storage', (e) => {
+    if (e.key === 'bsit_data_updated') {
+        const updateInfo = JSON.parse(e.newValue);
+        console.log('Update detected from another tab:', updateInfo);
+        
+        // Reload data
+        loadData();
+        showNotification('Data synchronized from another tab', 'success');
+    }
+});
+
 // Load all data
 async function loadData() {
     try {

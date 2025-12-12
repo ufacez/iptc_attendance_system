@@ -117,6 +117,23 @@
                         <input type="date" id="attendance-date" class="form-control">
                     </div>
                 </div>
+                
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="quickMarkAttendance('Present')">
+                        <i class="bi bi-check-circle-fill"></i> Mark Present
+                    </button>
+                    <button class="btn btn-danger" onclick="quickMarkAttendance('Absent')">
+                        <i class="bi bi-x-circle-fill"></i> Mark Absent
+                    </button>
+                    <button class="btn" style="background: #fb8c00; color: white;" onclick="quickMarkAttendance('Late')">
+                        <i class="bi bi-clock-fill"></i> Mark Late
+                    </button>
+                    <button class="btn" style="background: #1e88e5; color: white;" onclick="quickMarkAttendance('Excused')">
+                        <i class="bi bi-file-text-fill"></i> Mark Excused
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Filters -->
         <div class="content-card" style="margin-bottom: 20px;">

@@ -24,6 +24,35 @@ function setTodayDate() {
     document.getElementById('attendance-date').value = today;
 }
 
+// Cross-tab sync: Trigger update in other tabs
+function triggerCrossTabUpdate() {
+    const updateInfo = {
+        type: 'attendance',
+        timestamp: Date.now()
+    };
+    
+    // Set to trigger storage event in other tabs
+    localStorage.setItem('bsit_data_updated', JSON.stringify(updateInfo));
+    
+    // Clear after a moment
+    setTimeout(() => {
+        localStorage.removeItem('bsit_data_updated');
+    }, 100);
+}
+
+// Cross-tab sync: Listen for updates from other tabs
+window.addEventListener('storage', (e) => {
+    if (e.key === 'bsit_data_updated') {
+        const updateInfo = JSON.parse(e.newValue);
+        console.log('Update detected from another tab:', updateInfo);
+        
+        // Reload attendance and students data
+        loadStudents();
+        loadAttendance();
+        showNotification('Data synchronized from another tab', 'success');
+    }
+});
+
 // Load students
 async function loadStudents() {
     try {
@@ -204,6 +233,9 @@ async function quickMarkAttendance(status) {
             showNotification(`Marked ${studentName} as ${status}`);
             loadAttendance();
             select.value = '';
+            
+            // Trigger update in other tabs
+            triggerCrossTabUpdate();
         }
     } catch (error) {
         console.error('Error marking attendance:', error);
@@ -223,6 +255,9 @@ async function deleteAttendance(id) {
         if (response.ok) {
             showNotification('Attendance record deleted successfully');
             loadAttendance();
+            
+            // Trigger update in other tabs
+            triggerCrossTabUpdate();
         }
     } catch (error) {
         console.error('Error deleting attendance:', error);

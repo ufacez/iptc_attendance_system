@@ -1,4 +1,4 @@
 Flask==3.0.0
 python-dotenv==1.0.0
-livereload==2.6.3
-tornado==6.1
+flask-socketio==5.3.6
+python-socketio==5.11.0

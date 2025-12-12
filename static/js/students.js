@@ -18,6 +18,34 @@ function setCurrentDate() {
     });
 }
 
+// Cross-tab sync: Trigger update in other tabs
+function triggerCrossTabUpdate() {
+    const updateInfo = {
+        type: 'student',
+        timestamp: Date.now()
+    };
+    
+    // Set to trigger storage event in other tabs
+    localStorage.setItem('bsit_data_updated', JSON.stringify(updateInfo));
+    
+    // Clear after a moment
+    setTimeout(() => {
+        localStorage.removeItem('bsit_data_updated');
+    }, 100);
+}
+
+// Cross-tab sync: Listen for updates from other tabs
+window.addEventListener('storage', (e) => {
+    if (e.key === 'bsit_data_updated') {
+        const updateInfo = JSON.parse(e.newValue);
+        console.log('Update detected from another tab:', updateInfo);
+        
+        // Reload students data
+        loadStudents();
+        showNotification('Data synchronized from another tab', 'success');
+    }
+});
+
 // Load students
 async function loadStudents() {
     try {
@@ -212,6 +240,9 @@ async function saveStudent(event) {
                 showNotification('Student updated successfully');
                 loadStudents();
                 closeModal();
+                
+                // Trigger update in other tabs
+                triggerCrossTabUpdate();
             }
         } else {
             const response = await fetch('/api/students', {
@@ -224,6 +255,9 @@ async function saveStudent(event) {
                 showNotification('Student created successfully');
                 loadStudents();
                 closeModal();
+                
+                // Trigger update in other tabs
+                triggerCrossTabUpdate();
             }
         }
     } catch (error) {
@@ -244,6 +278,9 @@ async function deleteStudent(id) {
         if (response.ok) {
             showNotification('Student deleted successfully');
             loadStudents();
+            
+            // Trigger update in other tabs
+            triggerCrossTabUpdate();
         }
     } catch (error) {
         console.error('Error deleting student:', error);

@@ -62,6 +62,9 @@
             <p>Welcome back! Here's what's happening today.</p>
         </div>
         <div class="topbar-right">
+            <button class="btn btn-secondary btn-sm" onclick="refreshData()" style="margin-right: 15px;">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
             <div class="topbar-date">
                 <i class="bi bi-calendar3"></i>
                 <span id="current-date"></span>
@@ -191,14 +194,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        let chartInstance = null;
+
         // Set current date
-        const today = new Date();
-        document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        });
+        function setCurrentDate() {
+            const today = new Date();
+            document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
 
         // Load dashboard stats
         async function loadDashboardStats() {
@@ -212,9 +219,14 @@
                 document.getElementById('absent-today').textContent = data.absent_today;
                 document.getElementById('late-today').textContent = data.late_today;
 
+                // Destroy existing chart if it exists
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
                 // Create weekly trend chart
                 const ctx = document.getElementById('weeklyChart').getContext('2d');
-                new Chart(ctx, {
+                chartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: data.weekly_trend.map(d => new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' })),
@@ -265,10 +277,62 @@
 
             } catch (error) {
                 console.error('Error loading dashboard stats:', error);
+                showNotification('Error loading dashboard data', 'error');
             }
         }
 
-        loadDashboardStats();
+        // Manual refresh function
+        function refreshData() {
+            loadDashboardStats();
+            showNotification('Refreshed Successfully', 'success');
+        }
+
+        // Notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const icon = notification.querySelector('.notification-icon');
+            const messageEl = notification.querySelector('.notification-message');
+            
+            icon.innerHTML = type === 'error' ? '<i class="bi bi-x-circle-fill"></i>' : '<i class="bi bi-check-circle-fill"></i>';
+            messageEl.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Cross-tab sync: Listen for updates from other tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'bsit_data_updated') {
+                const updateInfo = JSON.parse(e.newValue);
+                console.log('Update detected from another tab:', updateInfo);
+                
+                // Reload dashboard data
+                loadDashboardStats();
+                showNotification('Synchronized Successfully', 'success');
+            }
+        });
+
+        // Auto-refresh every 30 seconds
+        let autoRefreshInterval = setInterval(() => {
+            console.log('Auto-refreshing dashboard...');
+            loadDashboardStats();
+        }, 30000); // 30 seconds
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setCurrentDate();
+            loadDashboardStats();
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        });
     </script>
 </body>
 </html>

@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, jsonify, send_file
-from livereload import Server
+from flask_socketio import SocketIO, emit
 import csv
 import os
 from datetime import datetime, timedelta
 from collections import defaultdict
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your-secret-key-change-this-in-production'
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Database files
 DB_FILE = 'students.csv'
@@ -52,6 +54,24 @@ def read_attendance():
         for row in reader:
             attendance.append(row)
     return attendance
+
+# Broadcast data updates
+def broadcast_data_update(update_type):
+    """Broadcast to all connected clients that data has changed"""
+    socketio.emit('data_updated', {
+        'type': update_type,
+        'timestamp': datetime.now().isoformat()
+    })
+
+# WebSocket events
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+    emit('connection_response', {'data': 'Connected to server'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
 
 # Routes
 @app.route('/')
@@ -141,6 +161,9 @@ def create_student():
             datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         ])
     
+    # Broadcast update
+    broadcast_data_update('student_created')
+    
     return jsonify({'message': 'Student created successfully', 'id': student_id}), 201
 
 @app.route('/api/students/<int:student_id>', methods=['PUT'])
@@ -163,6 +186,10 @@ def update_student(student_id):
             writer = csv.DictWriter(f, fieldnames=['id', 'name', 'email', 'year', 'section', 'created_at'])
             writer.writeheader()
             writer.writerows(students)
+        
+        # Broadcast update
+        broadcast_data_update('student_updated')
+        
         return jsonify({'message': 'Student updated successfully'})
     
     return jsonify({'message': 'Student not found'}), 404
@@ -176,6 +203,9 @@ def delete_student(student_id):
         writer = csv.DictWriter(f, fieldnames=['id', 'name', 'email', 'year', 'section', 'created_at'])
         writer.writeheader()
         writer.writerows(students)
+    
+    # Broadcast update
+    broadcast_data_update('student_deleted')
     
     return jsonify({'message': 'Student deleted successfully'})
 
@@ -213,6 +243,9 @@ def mark_attendance():
             data.get('notes', '')
         ])
     
+    # Broadcast update
+    broadcast_data_update('attendance_marked')
+    
     return jsonify({'message': 'Attendance marked successfully', 'id': attendance_id}), 201
 
 @app.route('/api/attendance/<int:attendance_id>', methods=['DELETE'])
@@ -225,6 +258,9 @@ def delete_attendance(attendance_id):
         writer.writeheader()
         writer.writerows(attendance)
     
+    # Broadcast update
+    broadcast_data_update('attendance_deleted')
+    
     return jsonify({'message': 'Attendance record deleted successfully'})
 
 @app.route('/api/export/students')
@@ -236,9 +272,5 @@ def export_attendance():
     return send_file(ATTENDANCE_FILE, as_attachment=True, download_name='bsit_attendance_export.csv')
 
 if __name__ == '__main__':
-    server = Server(app.wsgi_app)
-    server.watch('templates/*.html')
-    server.watch('static/css/*.css')
-    server.watch('static/js/*.js')
-    server.watch('*.py')
-    server.serve(port=5000, host='localhost')
+    # Use socketio.run instead of app.run
+    socketio.run(app, debug=True, host='localhost', port=5000)
