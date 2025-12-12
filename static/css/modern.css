@@ -30,6 +30,11 @@ body {
     line-height: 1.6;
 }
 
+/* Bootstrap Icons styling */
+.bi {
+    vertical-align: middle;
+}
+
 /* Sidebar */
 .sidebar {
     position: fixed;
@@ -130,6 +135,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 18px;
 }
 
 /* Topbar */

@@ -101,7 +101,7 @@ function renderAttendanceTable() {
             <tr>
                 <td colspan="8" style="padding: 40px; text-align: center;">
                     <div class="empty-state">
-                        <div class="empty-state-icon">✓</div>
+                        <div class="empty-state-icon"><i class="bi bi-check-circle"></i></div>
                         <div class="empty-state-text">No attendance records found</div>
                     </div>
                 </td>
@@ -125,7 +125,7 @@ function renderAttendanceTable() {
             <td>${record.notes || '-'}</td>
             <td style="text-align: center;">
                 <button class="btn btn-danger btn-sm" onclick="deleteAttendance(${record.id})">
-                    🗑️ Delete
+                    <i class="bi bi-trash"></i> Delete
                 </button>
             </td>
         </tr>
@@ -144,10 +144,10 @@ function getStatusBadgeClass(status) {
 
 function getStatusIcon(status) {
     const icons = {
-        'Present': '✓',
-        'Absent': '✗',
-        'Late': '⏰',
-        'Excused': '📝'
+        'Present': '<i class="bi bi-check-circle-fill"></i>',
+        'Absent': '<i class="bi bi-x-circle-fill"></i>',
+        'Late': '<i class="bi bi-clock-fill"></i>',
+        'Excused': '<i class="bi bi-file-text-fill"></i>'
     };
     return icons[status] || '';
 }
@@ -219,7 +219,7 @@ function showNotification(message, type = 'success') {
     const icon = notification.querySelector('.notification-icon');
     const messageEl = notification.querySelector('.notification-message');
     
-    icon.textContent = type === 'error' ? '✗' : '✓';
+    icon.innerHTML = type === 'error' ? '<i class="bi bi-x-circle-fill"></i>' : '<i class="bi bi-check-circle-fill"></i>';
     messageEl.textContent = message;
     notification.className = `notification ${type}`;
     notification.style.display = 'block';

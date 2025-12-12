@@ -48,7 +48,7 @@ function renderStudentsBySection() {
             <div class="content-card">
                 <div class="card-body">
                     <div class="empty-state">
-                        <div class="empty-state-icon">👥</div>
+                        <div class="empty-state-icon"><i class="bi bi-people"></i></div>
                         <div class="empty-state-text">No students found</div>
                     </div>
                 </div>
@@ -119,8 +119,12 @@ function renderStudentsBySection() {
                         <td>${student.email}</td>
                         <td>${new Date(student.created_at).toLocaleDateString()}</td>
                         <td style="text-align: center;">
-                            <button class="btn btn-edit btn-sm" onclick="editStudent(${student.id})">✏️ Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">🗑️ Delete</button>
+                            <button class="btn btn-edit btn-sm" onclick="editStudent(${student.id})">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -253,7 +257,7 @@ function showNotification(message, type = 'success') {
     const icon = notification.querySelector('.notification-icon');
     const messageEl = notification.querySelector('.notification-message');
     
-    icon.textContent = type === 'error' ? '✗' : '✓';
+    icon.innerHTML = type === 'error' ? '<i class="bi bi-x-circle-fill"></i>' : '<i class="bi bi-check-circle-fill"></i>';
     messageEl.textContent = message;
     notification.className = `notification ${type}`;
     notification.style.display = 'block';

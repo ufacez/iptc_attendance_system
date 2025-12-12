@@ -147,7 +147,7 @@ function showNotification(message, type = 'success') {
     const icon = notification.querySelector('.notification-icon');
     const messageEl = notification.querySelector('.notification-message');
     
-    icon.textContent = type === 'error' ? '✗' : '✓';
+    icon.innerHTML = type === 'error' ? '<i class="bi bi-x-circle-fill"></i>' : '<i class="bi bi-check-circle-fill"></i>';
     messageEl.textContent = message;
     notification.className = `notification ${type}`;
     notification.style.display = 'block';
