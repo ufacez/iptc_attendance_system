@@ -55,6 +55,34 @@ def read_attendance():
             attendance.append(row)
     return attendance
 
+def check_attendance_exists(student_id, date):
+    """Check if attendance record already exists for student on given date"""
+    attendance = read_attendance()
+    for record in attendance:
+        if record['student_id'] == str(student_id) and record['date'] == date:
+            return True
+    return False
+
+def update_attendance_record(student_id, date, status, notes=''):
+    """Update existing attendance record"""
+    attendance = read_attendance()
+    updated = False
+    
+    for record in attendance:
+        if record['student_id'] == str(student_id) and record['date'] == date:
+            record['status'] = status
+            record['notes'] = notes
+            updated = True
+            break
+    
+    if updated:
+        with open(ATTENDANCE_FILE, 'w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=['id', 'student_id', 'student_name', 'year', 'section', 'date', 'status', 'notes'])
+            writer.writeheader()
+            writer.writerows(attendance)
+    
+    return updated
+
 # Broadcast data updates
 def broadcast_data_update(update_type):
     """Broadcast to all connected clients that data has changed"""
@@ -228,25 +256,46 @@ def get_attendance():
 @app.route('/api/attendance', methods=['POST'])
 def mark_attendance():
     data = request.json
-    attendance_id = get_next_id(ATTENDANCE_FILE)
+    student_id = data['student_id']
+    date = data.get('date', datetime.now().strftime('%Y-%m-%d'))
+    status = data['status']
+    notes = data.get('notes', '')
     
-    with open(ATTENDANCE_FILE, 'a', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            attendance_id,
-            data['student_id'],
-            data['student_name'],
-            data['year'],
-            data['section'],
-            data.get('date', datetime.now().strftime('%Y-%m-%d')),
-            data['status'],
-            data.get('notes', '')
-        ])
-    
-    # Broadcast update
-    broadcast_data_update('attendance_marked')
-    
-    return jsonify({'message': 'Attendance marked successfully', 'id': attendance_id}), 201
+    # Check if attendance already exists
+    if check_attendance_exists(student_id, date):
+        # Update existing record
+        if update_attendance_record(student_id, date, status, notes):
+            broadcast_data_update('attendance_updated')
+            return jsonify({
+                'message': 'Attendance updated successfully',
+                'action': 'updated'
+            }), 200
+        else:
+            return jsonify({'message': 'Failed to update attendance'}), 500
+    else:
+        # Create new record
+        attendance_id = get_next_id(ATTENDANCE_FILE)
+        
+        with open(ATTENDANCE_FILE, 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                attendance_id,
+                student_id,
+                data['student_name'],
+                data['year'],
+                data['section'],
+                date,
+                status,
+                notes
+            ])
+        
+        broadcast_data_update('attendance_marked')
+        
+        return jsonify({
+            'message': 'Attendance marked successfully',
+            'action': 'created',
+            'id': attendance_id
+        }), 201
 
 @app.route('/api/attendance/<int:attendance_id>', methods=['DELETE'])
 def delete_attendance(attendance_id):

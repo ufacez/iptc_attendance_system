@@ -31,10 +31,8 @@ function triggerCrossTabUpdate() {
         timestamp: Date.now()
     };
     
-    // Set to trigger storage event in other tabs
     localStorage.setItem('bsit_data_updated', JSON.stringify(updateInfo));
     
-    // Clear after a moment
     setTimeout(() => {
         localStorage.removeItem('bsit_data_updated');
     }, 100);
@@ -46,7 +44,6 @@ window.addEventListener('storage', (e) => {
         const updateInfo = JSON.parse(e.newValue);
         console.log('Update detected from another tab:', updateInfo);
         
-        // Reload attendance and students data
         loadStudents();
         loadAttendance();
         showNotification('Data synchronized from another tab', 'success');
@@ -198,6 +195,13 @@ function getStatusIcon(status) {
     return icons[status] || '';
 }
 
+// Check if attendance already exists for student on selected date
+function checkAttendanceExists(studentId, date) {
+    return attendanceRecords.some(record => 
+        record.student_id === studentId && record.date === date
+    );
+}
+
 // Quick mark attendance
 async function quickMarkAttendance(status) {
     const select = document.getElementById('quick-student');
@@ -213,6 +217,16 @@ async function quickMarkAttendance(status) {
     const year = option.dataset.year;
     const section = option.dataset.section;
     const date = document.getElementById('attendance-date').value;
+    
+    // Check if attendance already exists
+    const exists = checkAttendanceExists(studentId, date);
+    
+    if (exists) {
+        const confirmMsg = `Attendance for ${studentName} on ${new Date(date).toLocaleDateString()} already exists.\n\nDo you want to update it to "${status}"?`;
+        if (!confirm(confirmMsg)) {
+            return;
+        }
+    }
     
     try {
         const response = await fetch('/api/attendance', {
@@ -230,11 +244,17 @@ async function quickMarkAttendance(status) {
         });
         
         if (response.ok) {
-            showNotification(`Marked ${studentName} as ${status}`);
+            const result = await response.json();
+            
+            if (result.action === 'updated') {
+                showNotification(`Updated ${studentName}'s attendance to ${status}`);
+            } else {
+                showNotification(`Marked ${studentName} as ${status}`);
+            }
+            
             loadAttendance();
             select.value = '';
             
-            // Trigger update in other tabs
             triggerCrossTabUpdate();
         }
     } catch (error) {
@@ -256,7 +276,6 @@ async function deleteAttendance(id) {
             showNotification('Attendance record deleted successfully');
             loadAttendance();
             
-            // Trigger update in other tabs
             triggerCrossTabUpdate();
         }
     } catch (error) {
