@@ -25,10 +25,8 @@ function triggerCrossTabUpdate() {
         timestamp: Date.now()
     };
     
-    // Set to trigger storage event in other tabs
     localStorage.setItem('bsit_data_updated', JSON.stringify(updateInfo));
     
-    // Clear after a moment
     setTimeout(() => {
         localStorage.removeItem('bsit_data_updated');
     }, 100);
@@ -40,7 +38,6 @@ window.addEventListener('storage', (e) => {
         const updateInfo = JSON.parse(e.newValue);
         console.log('Update detected from another tab:', updateInfo);
         
-        // Reload students data
         loadStudents();
         showNotification('Data synchronized from another tab', 'success');
     }
@@ -92,7 +89,6 @@ function renderStudentsBySection() {
     years.forEach(year => {
         const yearStudents = filteredStudents.filter(s => s.year === year);
         if (yearStudents.length > 0) {
-            // Group by section within year
             const sections = {};
             yearStudents.forEach(student => {
                 if (!sections[student.section]) {
@@ -147,6 +143,9 @@ function renderStudentsBySection() {
                         <td>${student.email}</td>
                         <td>${new Date(student.created_at).toLocaleDateString()}</td>
                         <td style="text-align: center;">
+                            <button class="btn btn-sm" style="background: var(--info); color: white; margin-right: 6px;" onclick="viewAttendanceHistory(${student.id})">
+                                <i class="bi bi-eye"></i> View
+                            </button>
                             <button class="btn btn-edit btn-sm" onclick="editStudent(${student.id})">
                                 <i class="bi bi-pencil-square"></i> Edit
                             </button>
@@ -173,6 +172,108 @@ function renderStudentsBySection() {
     });
     
     container.innerHTML = html;
+}
+
+// View attendance history for a student
+async function viewAttendanceHistory(studentId) {
+    const student = students.find(s => s.id == studentId);
+    if (!student) return;
+    
+    try {
+        const response = await fetch('/api/attendance');
+        const allAttendance = await response.json();
+        
+        const studentAttendance = allAttendance.filter(a => a.student_id == studentId);
+        
+        // Sort by date (newest first)
+        studentAttendance.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Calculate statistics
+        const totalRecords = studentAttendance.length;
+        const presentCount = studentAttendance.filter(a => a.status === 'Present').length;
+        const absentCount = studentAttendance.filter(a => a.status === 'Absent').length;
+        const lateCount = studentAttendance.filter(a => a.status === 'Late').length;
+        const excusedCount = studentAttendance.filter(a => a.status === 'Excused').length;
+        const attendanceRate = totalRecords > 0 ? ((presentCount + lateCount) / totalRecords * 100).toFixed(1) : 0;
+        
+        // Show modal
+        document.getElementById('history-student-name').textContent = student.name;
+        document.getElementById('history-student-info').textContent = `${student.year} - ${student.section}`;
+        document.getElementById('history-total-records').textContent = totalRecords;
+        document.getElementById('history-present').textContent = presentCount;
+        document.getElementById('history-absent').textContent = absentCount;
+        document.getElementById('history-late').textContent = lateCount;
+        document.getElementById('history-excused').textContent = excusedCount;
+        document.getElementById('history-attendance-rate').textContent = `${attendanceRate}%`;
+        
+        // Set rate color
+        const rateElement = document.getElementById('history-attendance-rate');
+        if (attendanceRate >= 90) {
+            rateElement.style.color = 'var(--success)';
+        } else if (attendanceRate >= 75) {
+            rateElement.style.color = 'var(--warning)';
+        } else {
+            rateElement.style.color = 'var(--danger)';
+        }
+        
+        // Render attendance records
+        const tbody = document.getElementById('history-tbody');
+        if (studentAttendance.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 40px; color: var(--text-gray);">
+                        No attendance records found for this student
+                    </td>
+                </tr>
+            `;
+        } else {
+            tbody.innerHTML = studentAttendance.map(record => `
+                <tr>
+                    <td>${new Date(record.date).toLocaleDateString('en-US', { 
+                        weekday: 'short',
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric' 
+                    })}</td>
+                    <td>
+                        <span class="badge ${getStatusBadgeClass(record.status)}">
+                            ${getStatusIcon(record.status)} ${record.status}
+                        </span>
+                    </td>
+                    <td>${record.notes || '-'}</td>
+                </tr>
+            `).join('');
+        }
+        
+        document.getElementById('history-modal').style.display = 'block';
+    } catch (error) {
+        console.error('Error loading attendance history:', error);
+        showNotification('Error loading attendance history', 'error');
+    }
+}
+
+function closeHistoryModal() {
+    document.getElementById('history-modal').style.display = 'none';
+}
+
+function getStatusBadgeClass(status) {
+    const classes = {
+        'Present': 'badge-success',
+        'Absent': 'badge-danger',
+        'Late': 'badge-warning',
+        'Excused': 'badge-info'
+    };
+    return classes[status] || 'badge-secondary';
+}
+
+function getStatusIcon(status) {
+    const icons = {
+        'Present': '<i class="bi bi-check-circle-fill"></i>',
+        'Absent': '<i class="bi bi-x-circle-fill"></i>',
+        'Late': '<i class="bi bi-clock-fill"></i>',
+        'Excused': '<i class="bi bi-file-text-fill"></i>'
+    };
+    return icons[status] || '';
 }
 
 // Filter functions
@@ -240,8 +341,6 @@ async function saveStudent(event) {
                 showNotification('Student updated successfully');
                 loadStudents();
                 closeModal();
-                
-                // Trigger update in other tabs
                 triggerCrossTabUpdate();
             }
         } else {
@@ -255,8 +354,6 @@ async function saveStudent(event) {
                 showNotification('Student created successfully');
                 loadStudents();
                 closeModal();
-                
-                // Trigger update in other tabs
                 triggerCrossTabUpdate();
             }
         }
@@ -278,8 +375,6 @@ async function deleteStudent(id) {
         if (response.ok) {
             showNotification('Student deleted successfully');
             loadStudents();
-            
-            // Trigger update in other tabs
             triggerCrossTabUpdate();
         }
     } catch (error) {
@@ -306,8 +401,13 @@ function showNotification(message, type = 'success') {
 
 // Close modal on outside click
 window.onclick = function(event) {
-    const modal = document.getElementById('student-modal');
-    if (event.target == modal) {
+    const studentModal = document.getElementById('student-modal');
+    const historyModal = document.getElementById('history-modal');
+    
+    if (event.target == studentModal) {
         closeModal();
+    }
+    if (event.target == historyModal) {
+        closeHistoryModal();
     }
 }
